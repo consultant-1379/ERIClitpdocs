@@ -1,0 +1,25 @@
+@startuml
+actor User
+User -> "ModelManager" : create_item
+activate ModelManager
+"ModelManager" --> "ModelManager" : "check_item_type_registered()"
+"ModelManager" --> "ModelManager" : "check_item_exists()"
+"ModelManager" --> "ModelManager" : "parent.check_item_allowed()"
+"ModelManager" --> "ItemType" : "validate_properties(properties)"
+activate ItemType
+"ItemType" --> "ItemType" : "check_required_properties()"
+"ItemType" --> "PropertyValidator" : "run_property_validators(property)"
+activate PropertyValidator
+"PropertyValidator" --> "PropertyValidator" : "validate(property_value)"
+"ItemType" <-- "PropertyValidator" : "ValidationError"
+deactivate PropertyValidator
+"ItemType" --> "ItemValidator" : "run_item_type_validators(properties)"
+activate ItemValidator
+"ItemValidator" --> "ItemValidator" : "validate(properties)"
+"ItemType" <-- "ItemValidator" : "ValidationError"
+deactivate ItemValidator
+"ModelManager" <-- "ItemType" : "ValidationError list()"
+deactivate ItemType
+"ModelManager" --> "User" : "created item or list of ValidationError"
+deactivate ModelManager
+@enduml

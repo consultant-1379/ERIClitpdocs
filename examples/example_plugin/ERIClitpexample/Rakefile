@@ -1,0 +1,22 @@
+require 'rspec/core/rake_task'
+
+ RSpec::Core::RakeTask.new(:prepare) do |t|
+  directory = `pwd`.strip
+  print $directory
+  sh "mkdir -p #{directory}/mcollective"
+  sh "ln -s  #{directory}/puppet/mcollective_agents/files #{directory}/mcollective/agent"
+  sh "ln -s  #{directory}/puppet/mcollective_utils/files #{directory}/mcollective/util"
+  sh "touch /tmp/file.txt"
+end
+ RSpec::Core::RakeTask.new(:test) do |t|
+  t.pattern = FileList['spec/test/agent/test*.rb']
+  t.rspec_opts = "--color"
+ end
+ RSpec::Core::RakeTask.new(:post) do |t|
+  directory = `pwd`.strip
+  sh "rm -rf #{directory}/mcollective"
+end
+Kernel.trap("EXIT") do
+  Rake::Task[:post].invoke
+end
+task :default => [:prepare, :test]

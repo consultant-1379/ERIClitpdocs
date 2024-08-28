@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.ericsson.nms.litp</groupId>
+    <artifactId>ERIClitpexample_CXP1234567</artifactId>
+    <packaging>rpm</packaging>
+    <name>[${project.parent.artifactId}] RPM module</name>
+    <description>LITP example plugin</description>
+    <parent>
+        <groupId>com.ericsson.nms.litp</groupId>
+        <artifactId>ERIClitpexample</artifactId>
+        <version>2.43.3-SNAPSHOT</version>
+    </parent>
+
+    <properties>
+	    <!--
+	    This property determines whether Maven should publish the rpm
+	    module to the ci portal. Please check with your configuration
+	    manager whether your Plugin is ready to be published.
+
+	    Because this is an *EXAMPLE* Plugin, we choose not to
+	    publish it.
+	    -->
+        <publish_artifact>false</publish_artifact>
+        <bom_version>RELEASE</bom_version>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>rpm-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <inherited>true</inherited>
+                <configuration>
+                    <requires>
+                        <require>python &gt;= 2.6</require>
+                        <require>ERIClitpcore_CXP9030418 &gt;= ${litpcore_version}</require>
+                        <require>ERIClitpexampleapi_CXP1234568</require>
+                    </requires>
+                </configuration>
+             </plugin>
+             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin> 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <configuration>
+                    <skipDeploy>true</skipDeploy>
+                </configuration>
+           </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>current-dep</id>
+      <activation>
+        <property>
+          <name>!UsingLatest</name>
+        </property>
+      </activation>
+      <properties>
+        <litpcore_version>1.20.3</litpcore_version>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>com.ericsson.nms.litp</groupId>
+          <artifactId>ERIClitpcore_CXP9030418</artifactId>
+          <version>${litpcore_version}</version>
+          <type>rpm</type>
+        </dependency>
+        <dependency>
+            <groupId>com.ericsson.nms.litp</groupId>
+            <artifactId>ERIClitpexampleapi_CXP1234568</artifactId>
+            <type>rpm</type>
+            <version>2.43.3-SNAPSHOT</version>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>latest-dep</id>
+      <properties>
+        <UsingLatest>true</UsingLatest>
+      </properties>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>com.ericsson.litp</groupId>
+            <artifactId>ci-bom</artifactId>
+            <version>${bom_version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+      <dependencies>
+        <dependency>
+          <groupId>com.ericsson.nms.litp</groupId>
+          <artifactId>ERIClitpcore_CXP9030418</artifactId>
+          <type>rpm</type>
+        </dependency>
+     </dependencies>
+    </profile>
+  </profiles>
+</project>  
+

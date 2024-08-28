@@ -1,0 +1,64 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.ericsson.nms.litp</groupId>
+    <artifactId>ERIClitpdocs</artifactId>
+    <version>2.43.3-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <parent>
+        <groupId>com.ericsson.litp</groupId>
+        <artifactId>integration</artifactId>
+        <version>2.47.1</version>
+    </parent>
+    <scm>
+        <developerConnection>${ericsson.scm.url}</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <modules>
+        <module>ERIClitpdocs_CXP9030557</module>
+        <module>examples/example_plugin/ERIClitpexample</module>
+        <module>examples/example_extension/ERIClitpexampleapi</module>
+    </modules>
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <name>Site</name>
+            <url>${site.url}/ERIClitpdocs/${project.version}</url>
+        </site>
+    </distributionManagement>
+
+    <profiles>
+        <!--
+        It looks like this profile is intended to be called by the unit job to generate a snapshot
+        site before a release is made.
+        If called it will generate a site at the following link:
+        https://arm1s11-eiffel004.eiffel.gic.ericsson.se:8443/nexus/content/sites/litp2/ERIClitpdocs/snapshot
+        -->
+        <profile>
+            <id>site_stage</id>
+            <distributionManagement>
+                <site>
+                    <id>site</id>
+                    <name>Site</name>
+                    <url>${site.url}/ERIClitpdocs/snapshot</url>
+                </site>
+            </distributionManagement>
+        </profile>
+
+        <!--
+        This profile is called in the Release job. It adds the latest site to:
+        https://arm1s11-eiffel004.eiffel.gic.ericsson.se:8443/nexus/content/sites/litp2/ERIClitpdocs/latest
+        -->
+        <profile>
+            <id>site_latest</id>
+            <distributionManagement>
+                <site>
+                    <id>site</id>
+                    <name>Site</name>
+                    <url>${site.url}/ERIClitpdocs/latest</url>
+                </site>
+            </distributionManagement>
+        </profile>
+    </profiles>
+
+</project>
